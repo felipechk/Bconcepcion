@@ -1,0 +1,68 @@
+use	LibreriaDB
+go
+
+create procedure [LibreriaDB_Index]
+as
+begin
+SELECT [Id]
+      ,[Title]
+      ,[IsAvailable]
+  FROM [dbo].[Books]
+end
+go
+
+
+create procedure [LibreriaDB_Create]
+(
+
+@Title nvarchar(255)
+,@IsAvailable bit
+)
+as
+begin
+INSERT INTO [dbo].[Books]
+           ([Title]
+           ,[IsAvailable])
+     VALUES
+           (@Title
+           ,@IsAvailable)
+end
+go
+
+create procedure [LibreriaDB_Read]
+(
+@Id int
+)
+as
+begin
+SELECT [Id]
+      ,[Title]
+      ,[IsAvailable]
+  FROM [dbo].[Books] where Id = @Id
+end
+go
+
+create procedure [LibreriaDB_Update]
+(
+@Id int
+,@Title nvarchar(255)
+,@IsAvailable bit
+)
+as
+begin
+UPDATE [dbo].[Books]
+   SET [Title] = @Title
+      ,[IsAvailable] = @IsAvailable
+ WHERE Id = @Id
+end
+go
+
+create procedure [LibreriaDB_Delete]
+(
+@Id int
+)
+as
+begin
+DELETE 
+  FROM [dbo].[Books] where Id = @Id
+end
