@@ -1,6 +1,11 @@
 ﻿using Libreria.FormPrincipal;
 using System;
 using System.Windows.Forms;
+using LogicaNegocio.Libreria;
+using AccesodeDatos.ClsDatabase;
+using Microsoft.Extensions.DependencyInjection;
+
+
 
 namespace Libreria
 {
@@ -14,7 +19,17 @@ namespace Libreria
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FRMLogin());
+
+            // Configuración de inyección de dependencias
+            var serviceProvider = new ServiceCollection()
+                .AddSingleton<ClsDatabase>()  // Inyección de la clase de base de datos
+                .AddSingleton<Libros>()       // Inyección de la lógica de negocio para libros
+                .BuildServiceProvider();
+
+            // Obtener una instancia de LibroForm con las dependencias inyectadas
+            var libroForm = new LibroForm(serviceProvider.GetService<Libros>());
+
+            Application.Run(libroForm);
         }
     }
 }

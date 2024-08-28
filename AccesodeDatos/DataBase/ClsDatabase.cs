@@ -226,6 +226,38 @@ namespace AccesodeDatos.ClsDatabase
                 EjecutarDataAdapter(ref OBdatabase);
             }
         }
+        public bool ValidateUser(string username, string password, out string role)
+        {
+            role = string.Empty;
+
+            try
+            {
+                // Suponiendo que tienes una tabla de Usuarios con columnas Username, Password, y Role
+                _command = new SqlCommand("SELECT Role FROM Usuarios WHERE Username = @username AND Password = @password", _connection);
+                _command.Parameters.AddWithValue("@username", username);
+                _command.Parameters.AddWithValue("@password", password);
+
+                _connection.Open();
+                var result = _command.ExecuteScalar();
+
+                if (result != null)
+                {
+                    role = result.ToString();
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                _mensajeErrorDB = ex.Message;
+            }
+            finally
+            {
+                _connection.Close();
+            }
+
+            return false;
+        }
+
         #endregion
     }
 }
