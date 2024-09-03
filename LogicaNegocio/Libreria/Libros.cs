@@ -33,7 +33,7 @@ namespace LogicaNegocio.Libreria
                 NombreSP = "[LibreriaDB_Create]",
                 Scalar = true,
             };
-            Odatabase.Parámetros.Rows.Add(@"@Titulo","16",ObLibro.Titulo);
+            Odatabase.Parámetros.Rows.Add(@"@Title", "16",ObLibro.Titulo);
             Odatabase.Parámetros.Rows.Add(@"@IsAvailable", "16", ObLibro.IsAvailable1);
             Ejecutar(ref ObLibro);
         }
@@ -56,7 +56,8 @@ namespace LogicaNegocio.Libreria
                 NombreSP = "[LibreriaDB_Update]",
                 Scalar = true,
             };
-            Odatabase.Parámetros.Rows.Add(@"@Titulo", "16", ObLibro.Titulo);
+            Odatabase.Parámetros.Rows.Add(@"@Id", "4", ObLibro.Id); 
+            Odatabase.Parámetros.Rows.Add(@"@Title", "16", ObLibro.Titulo);
             Odatabase.Parámetros.Rows.Add(@"@IsAvailable", "16", ObLibro.IsAvailable1);
             Ejecutar(ref ObLibro);
         }
@@ -104,6 +105,5 @@ namespace LogicaNegocio.Libreria
             }
         }
         #endregion
-
     }
 }

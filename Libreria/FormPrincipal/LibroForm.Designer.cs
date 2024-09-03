@@ -1,9 +1,13 @@
-﻿namespace Libreria.FormPrincipal
+﻿using System.Windows.Forms;
+
+namespace Libreria.FormPrincipal
 {
     partial class LibroForm
     {
         private System.ComponentModel.IContainer components = null;
-
+        private System.Windows.Forms.CheckBox chkIsAvailable;
+        private System.Windows.Forms.ListView listViewLibros;
+        private System.Windows.Forms.Button btnDeleteBook;
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -17,6 +21,8 @@
 
         private void InitializeComponent()
         {
+            this.listViewLibros = new System.Windows.Forms.ListView();
+            this.chkIsAvailable = new System.Windows.Forms.CheckBox();
             this.txtTitle = new System.Windows.Forms.TextBox();
             this.txtBookId = new System.Windows.Forms.TextBox();
             this.lblTitle = new System.Windows.Forms.Label();
@@ -24,19 +30,44 @@
             this.btnAddBook = new System.Windows.Forms.Button();
             this.btnLoanBook = new System.Windows.Forms.Button();
             this.btnReturnBook = new System.Windows.Forms.Button();
-            this.listBoxLibros = new System.Windows.Forms.ListBox();
+            this.btnDeleteBook = new System.Windows.Forms.Button();
             this.SuspendLayout();
+            // 
+            // listViewLibros
+            // 
+            this.listViewLibros.FullRowSelect = true;
+            this.listViewLibros.GridLines = true;
+            this.listViewLibros.HideSelection = false;
+            this.listViewLibros.Location = new System.Drawing.Point(35, 109);
+            this.listViewLibros.Name = "listViewLibros";
+            this.listViewLibros.Size = new System.Drawing.Size(346, 148);
+            this.listViewLibros.TabIndex = 8;
+            this.listViewLibros.UseCompatibleStateImageBehavior = false;
+            this.listViewLibros.View = System.Windows.Forms.View.Details;
+            this.listViewLibros.Columns.Add("ID", 50, HorizontalAlignment.Left);
+            this.listViewLibros.Columns.Add("Título", 150, HorizontalAlignment.Left);
+            this.listViewLibros.Columns.Add("Disponible", 100, HorizontalAlignment.Left);
+            // 
+            // chkIsAvailable
+            // 
+            this.chkIsAvailable.AutoSize = true;
+            this.chkIsAvailable.Location = new System.Drawing.Point(215, 35);
+            this.chkIsAvailable.Name = "chkIsAvailable";
+            this.chkIsAvailable.Size = new System.Drawing.Size(75, 17);
+            this.chkIsAvailable.TabIndex = 4;
+            this.chkIsAvailable.Text = "Disponible";
+            this.chkIsAvailable.UseVisualStyleBackColor = true;
             // 
             // txtTitle
             // 
-            this.txtTitle.Location = new System.Drawing.Point(125, 34);
+            this.txtTitle.Location = new System.Drawing.Point(56, 6);
             this.txtTitle.Name = "txtTitle";
             this.txtTitle.Size = new System.Drawing.Size(200, 20);
             this.txtTitle.TabIndex = 0;
             // 
             // txtBookId
             // 
-            this.txtBookId.Location = new System.Drawing.Point(125, 72);
+            this.txtBookId.Location = new System.Drawing.Point(56, 32);
             this.txtBookId.Name = "txtBookId";
             this.txtBookId.Size = new System.Drawing.Size(100, 20);
             this.txtBookId.TabIndex = 1;
@@ -44,7 +75,7 @@
             // lblTitle
             // 
             this.lblTitle.AutoSize = true;
-            this.lblTitle.Location = new System.Drawing.Point(30, 37);
+            this.lblTitle.Location = new System.Drawing.Point(12, 9);
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(38, 13);
             this.lblTitle.TabIndex = 2;
@@ -53,7 +84,7 @@
             // lblBookId
             // 
             this.lblBookId.AutoSize = true;
-            this.lblBookId.Location = new System.Drawing.Point(30, 75);
+            this.lblBookId.Location = new System.Drawing.Point(32, 39);
             this.lblBookId.Name = "lblBookId";
             this.lblBookId.Size = new System.Drawing.Size(18, 13);
             this.lblBookId.TabIndex = 3;
@@ -61,7 +92,7 @@
             // 
             // btnAddBook
             // 
-            this.btnAddBook.Location = new System.Drawing.Point(33, 120);
+            this.btnAddBook.Location = new System.Drawing.Point(15, 80);
             this.btnAddBook.Name = "btnAddBook";
             this.btnAddBook.Size = new System.Drawing.Size(75, 23);
             this.btnAddBook.TabIndex = 4;
@@ -71,7 +102,7 @@
             // 
             // btnLoanBook
             // 
-            this.btnLoanBook.Location = new System.Drawing.Point(125, 120);
+            this.btnLoanBook.Location = new System.Drawing.Point(109, 80);
             this.btnLoanBook.Name = "btnLoanBook";
             this.btnLoanBook.Size = new System.Drawing.Size(75, 23);
             this.btnLoanBook.TabIndex = 5;
@@ -81,7 +112,7 @@
             // 
             // btnReturnBook
             // 
-            this.btnReturnBook.Location = new System.Drawing.Point(219, 120);
+            this.btnReturnBook.Location = new System.Drawing.Point(208, 80);
             this.btnReturnBook.Name = "btnReturnBook";
             this.btnReturnBook.Size = new System.Drawing.Size(95, 23);
             this.btnReturnBook.TabIndex = 6;
@@ -89,17 +120,22 @@
             this.btnReturnBook.UseVisualStyleBackColor = true;
             this.btnReturnBook.Click += new System.EventHandler(this.btnReturnBook_Click);
             // 
-            // listBoxLibros
+            // btnDeleteBook
             // 
-            this.listBoxLibros.Location = new System.Drawing.Point(33, 160);
-            this.listBoxLibros.Name = "listBoxLibros";
-            this.listBoxLibros.Size = new System.Drawing.Size(281, 160);
-            this.listBoxLibros.TabIndex = 7;
+            this.btnDeleteBook.Location = new System.Drawing.Point(320, 80);
+            this.btnDeleteBook.Name = "btnDeleteBook";
+            this.btnDeleteBook.Size = new System.Drawing.Size(75, 23);
+            this.btnDeleteBook.TabIndex = 7;
+            this.btnDeleteBook.Text = "Eliminar Libro";
+            this.btnDeleteBook.UseVisualStyleBackColor = true;
+            this.btnDeleteBook.Click += new System.EventHandler(this.btnDeleteBook_Click);
             // 
-            // Libro
+            // LibroForm
             // 
-            this.ClientSize = new System.Drawing.Size(348, 340);
-            this.Controls.Add(this.listBoxLibros);
+            this.ClientSize = new System.Drawing.Size(410, 272);
+            this.Controls.Add(this.btnDeleteBook);
+            this.Controls.Add(this.listViewLibros);
+            this.Controls.Add(this.chkIsAvailable);
             this.Controls.Add(this.btnReturnBook);
             this.Controls.Add(this.btnLoanBook);
             this.Controls.Add(this.btnAddBook);
@@ -107,7 +143,7 @@
             this.Controls.Add(this.lblTitle);
             this.Controls.Add(this.txtBookId);
             this.Controls.Add(this.txtTitle);
-            this.Name = "Libro";
+            this.Name = "LibroForm";
             this.Text = "Gestión de Libros";
             this.Load += new System.EventHandler(this.LibroForm_Load);
             this.ResumeLayout(false);
@@ -124,6 +160,5 @@
         private System.Windows.Forms.Button btnAddBook;
         private System.Windows.Forms.Button btnLoanBook;
         private System.Windows.Forms.Button btnReturnBook;
-        private System.Windows.Forms.ListBox listBoxLibros; // Declarar ListBox
     }
 }

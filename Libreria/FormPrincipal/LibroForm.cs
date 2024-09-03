@@ -3,123 +3,174 @@ using LogicaNegocio.Libreria;
 using System;
 using System.Data;
 using System.Windows.Forms;
+using LogicaNegocio;
+using Entidades;    
+
 
 namespace Libreria.FormPrincipal
 {
     public partial class LibroForm : Form
     {
-        private readonly Libros _libroLN;
-        private LibrosCls _libro;
-
-        public LibroForm(Libros libroLN)
+        private readonly Libros _libros;
+    
+        
+        public LibroForm()
         {
             InitializeComponent();
-            _libroLN = libroLN; // Inicializar la lógica de negocio
+            _libros = new Libros();
+            LoadBooks();
         }
 
-
-        private void LibroForm_Load(object sender, EventArgs e)
+        private void LoadBooks()
         {
-            CargarListaLibros();
-        }
+            // Instancia para manejar la lógica de negocio
+            LibrosCls librosCls = new LibrosCls();
+            _libros.Index(ref librosCls); 
 
-        private void CargarListaLibros()
-        {
-            try
+
+            listViewLibros.Items.Clear();
+
+
+            if (librosCls.Resultados != null && librosCls.Resultados.Rows.Count > 0)
             {
-                _libro = new LibrosCls();
-                _libroLN.Index(ref _libro);
+               
+                foreach (DataRow row in librosCls.Resultados.Rows)
+                {
+                    ListViewItem item = new ListViewItem(row["Id"].ToString());
+                    item.SubItems.Add(row["Title"].ToString());
+                    item.SubItems.Add(row["IsAvailable"].ToString() == "True" ? "Sí" : "No");
 
-                if (_libro.Resultados != null && _libro.Resultados.Rows.Count > 0)
-                {
-                    listBoxLibros.Items.Clear(); // Limpiar la lista antes de llenarla
-                    foreach (DataRow row in _libro.Resultados.Rows)
-                    {
-                        listBoxLibros.Items.Add($"{row["Id"]}: {row["Titulo"]}");
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("No se encontraron libros.");
+                    listViewLibros.Items.Add(item);
                 }
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show($"Error al cargar la lista de libros: {ex.Message}");
+                MessageBox.Show("No se encontraron libros en la base de datos.");
             }
         }
 
         private void btnAddBook_Click(object sender, EventArgs e)
         {
-            try
+            LibrosCls nuevoLibro = new LibrosCls
             {
-                _libro = new LibrosCls
-                {
-                    Titulo = txtTitle.Text,
-                    IsAvailable1 = true // Libro disponible por defecto
-                };
-                _libroLN.Create(ref _libro);
-                MessageBox.Show("Libro agregado exitosamente.");
-                CargarListaLibros(); // Actualizar la lista de libros después de agregar uno nuevo
+                Titulo = txtTitle.Text,
+                IsAvailable1 = chkIsAvailable.Checked
+            };
+
+            _libros.Create(ref nuevoLibro);
+
+            if (string.IsNullOrEmpty(nuevoLibro.MensajeError))
+            {
+                MessageBox.Show("Libro agregado con éxito.");
+                LoadBooks(); // Recargar la lista de libros
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show($"Error al agregar libro: {ex.Message}");
+                MessageBox.Show("Error: " + nuevoLibro.MensajeError);
             }
         }
 
         private void btnLoanBook_Click(object sender, EventArgs e)
         {
-            try
+            if (listViewLibros.SelectedItems.Count > 0) // Verifica que hay un libro seleccionado
             {
-                _libro = new LibrosCls { Id = int.Parse(txtBookId.Text) };
-                _libroLN.Read(ref _libro); // Leer el libro desde la base de datos
+                var selectedItem = listViewLibros.SelectedItems[0];
+                int bookId = int.Parse(selectedItem.Text); // El ID del libro está en la primera columna
+                string bookTitle = selectedItem.SubItems[1].Text; // El título del libro está en la segunda columna
 
-                if (_libro.IsAvailable1)
+                // Crear una instancia de la clase para manejar la lógica de negocio
+                LibrosCls libroPrestado = new LibrosCls
                 {
-                    _libro.IsAvailable1 = false; // Marcar como no disponible
-                    _libroLN.Update(ref _libro);
-                    MessageBox.Show("Libro prestado exitosamente.");
-                    CargarListaLibros(); // Actualizar la lista de libros después de prestar uno
+                    Id = bookId,
+                    Titulo = bookTitle, 
+                    IsAvailable1 = false // Cambiar el estado a no disponible
+                };
+
+                // Llamar al método Update en la clase de lógica de negocio para actualizar el estado
+                _libros.Update(ref libroPrestado);
+
+                if (string.IsNullOrEmpty(libroPrestado.MensajeError))
+                {
+                    MessageBox.Show("Libro prestado con éxito.");
+                    LoadBooks(); // Recargar la lista para reflejar los cambios
                 }
                 else
                 {
-                    MessageBox.Show("El libro no está disponible.");
+                    MessageBox.Show("Error al prestar el libro: " + libroPrestado.MensajeError);
                 }
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show($"Error al prestar libro: {ex.Message}");
+                MessageBox.Show("Por favor, selecciona un libro para prestar.");
             }
         }
 
         private void btnReturnBook_Click(object sender, EventArgs e)
         {
-            try
+            if (int.TryParse(txtBookId.Text, out int bookId))
             {
-                _libro = new LibrosCls { Id = int.Parse(txtBookId.Text) };
-                _libroLN.Read(ref _libro); // Leer el libro desde la base de datos
-
-                if (!_libro.IsAvailable1)
+                LibrosCls libroExistente = new LibrosCls
                 {
-                    _libro.IsAvailable1 = true; // Marcar como disponible
-                    _libroLN.Update(ref _libro);
-                    MessageBox.Show("Libro devuelto exitosamente.");
-                    CargarListaLibros(); // Actualizar la lista de libros después de devolver uno
+                    Id = bookId,
+                    Titulo = txtTitle.Text,
+                    IsAvailable1 = true 
+                };
+
+                // Llamada para actualizar el libro
+                _libros.Update(ref libroExistente);
+
+                if (string.IsNullOrEmpty(libroExistente.MensajeError))
+                {
+                    MessageBox.Show("Libro actualizado con éxito.");
+                    LoadBooks();
                 }
                 else
                 {
-                    MessageBox.Show("El libro ya está disponible.");
+                    MessageBox.Show("Error: " + libroExistente.MensajeError);
                 }
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show($"Error al devolver libro: {ex.Message}");
+                MessageBox.Show("El ID del libro no es válido. Por favor, ingresa un número entero.");
             }
         }
-        private void label3_Click(object sender, EventArgs e)
+        private void btnDeleteBook_Click(object sender, EventArgs e)
         {
+            if (listViewLibros.SelectedItems.Count > 0) // Verifica que hay un libro seleccionado
+                {
+                    var selectedItem = listViewLibros.SelectedItems[0];
+                    int bookId = int.Parse(selectedItem.Text);
 
+                    // Crear una instancia de la clase para manejar la lógica de negocio
+                    LibrosCls libroAEliminar = new LibrosCls
+                    {
+                        Id = bookId
+                    };
+
+                    // Llamar al método para eliminar el libro
+                    _libros.Delete(ref libroAEliminar);
+
+                    if (string.IsNullOrEmpty(libroAEliminar.MensajeError))
+                    {
+                        MessageBox.Show("Libro eliminado con éxito.");
+                        LoadBooks(); // Recargar la lista para reflejar los cambios
+                    }
+                    else
+                    {
+                        MessageBox.Show("Error al eliminar el libro: " + libroAEliminar.MensajeError);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Por favor, selecciona un libro para eliminar.");
+                }
+            
+        }
+        
+
+        private void LibroForm_Load(object sender, EventArgs e)
+        {
+            LoadBooks();
         }
     }
 }

@@ -186,14 +186,23 @@ namespace AccesodeDatos.ClsDatabase
             try
             {
                 PrepararConexión(ref OBdatabase);
+
+                if (string.IsNullOrEmpty(OBdatabase.NombreSP) || OBdatabase.Connection == null)
+                {
+                    throw new InvalidOperationException("El procedimiento almacenado o la conexión a la base de datos no están configurados correctamente.");
+                }
+
                 OBdatabase.Command = new SqlCommand(OBdatabase.NombreSP, OBdatabase.Connection)
                 {
                     CommandType = CommandType.StoredProcedure
                 };
+
                 AgregarParámetros(ref OBdatabase);
+
                 if (OBdatabase.Scalar)
                 {
-                    OBdatabase.ValorScalar = OBdatabase.Command.ExecuteScalar().ToString().Trim();
+                    object result = OBdatabase.Command.ExecuteScalar();
+                    OBdatabase.ValorScalar = result != null ? result.ToString().Trim() : null;
                 }
                 else
                 {
@@ -232,7 +241,7 @@ namespace AccesodeDatos.ClsDatabase
 
             try
             {
-                // Suponiendo que tienes una tabla de Usuarios con columnas Username, Password, y Role
+                
                 _command = new SqlCommand("SELECT Role FROM Usuarios WHERE Username = @username AND Password = @password", _connection);
                 _command.Parameters.AddWithValue("@username", username);
                 _command.Parameters.AddWithValue("@password", password);
@@ -257,7 +266,7 @@ namespace AccesodeDatos.ClsDatabase
 
             return false;
         }
-
-        #endregion
-    }
+      
+    #endregion
+}
 }

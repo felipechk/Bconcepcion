@@ -27,7 +27,7 @@ namespace Libreria
                 .BuildServiceProvider();
 
             // Obtener una instancia de LibroForm con las dependencias inyectadas
-            var libroForm = new LibroForm(serviceProvider.GetService<Libros>());
+            var libroForm = new LibroForm();
 
             Application.Run(libroForm);
         }
